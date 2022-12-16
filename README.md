@@ -4,4 +4,4 @@
 
 ## reference
 
-Tech school golang course on udemy [simple_bank](https://github.com/techschool/simplebank)
+Tech school golang course on Udemy: [simple-bank](https://github.com/techschool/simplebank)
