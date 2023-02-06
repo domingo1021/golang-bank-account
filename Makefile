@@ -9,4 +9,7 @@ migrateup:
 migratedown:
 	migrate -path ./Docker/DB/migration -database "postgresql://root:password1234@localhost:5432/bank_account?sslmode=disable" -verbose down
 
-.PHONY: postgres createdb dropdb migrateup migratedown
+sqlc:
+	sqlc generate
+
+.PHONY: postgres createdb dropdb migrateup migratedown sqlc
