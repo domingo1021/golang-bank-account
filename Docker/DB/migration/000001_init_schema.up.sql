@@ -4,7 +4,6 @@ CREATE TABLE "accounts" (
   "balance" bigint NOT NULL,
   "currency" varchar NOT NULL,
   "created_at" TIMESTAMP NOT NULL DEFAULT (now()),
-  "country_code" int NOT NULL
 );
 
 CREATE TABLE "entries" (
