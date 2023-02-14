@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"database/sql"
+	"log"
 	"testing"
 	"time"
 
@@ -29,6 +30,14 @@ func createRandomAccount(t *testing.T) Account {
 	require.NotZero(t, account.CreatedAt)
 
 	return account
+}
+
+func GetRandomAccountID() int64 {
+	count, err := testQueries.CountAccountsNumer(context.Background())
+	if err != nil {
+		log.Fatal("count account error: ", err)
+	}
+	return util.RandomInt(1, count)
 }
 
 func TestCreateAccount(t *testing.T) {
