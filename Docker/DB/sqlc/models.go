@@ -10,12 +10,11 @@ import (
 )
 
 type Account struct {
-	ID          int32     `json:"id"`
-	Owner       string    `json:"owner"`
-	Balance     int64     `json:"balance"`
-	Currency    string    `json:"currency"`
-	CreatedAt   time.Time `json:"createdAt"`
-	CountryCode int32     `json:"countryCode"`
+	ID        int64     `json:"id"`
+	Owner     string    `json:"owner"`
+	Balance   int64     `json:"balance"`
+	Currency  string    `json:"currency"`
+	CreatedAt time.Time `json:"createdAt"`
 }
 
 type Entry struct {
