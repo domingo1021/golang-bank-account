@@ -12,7 +12,7 @@ import (
 
 const createEntry = `-- name: CreateEntry :one
 INSERT INTO entries (
-  account_id,
+  id,
   amount
 ) VALUES (
   $1, $2
@@ -20,12 +20,12 @@ INSERT INTO entries (
 `
 
 type CreateEntryParams struct {
-	AccountID sql.NullInt64 `json:"accountID"`
-	Amount    int64         `json:"amount"`
+	ID     int64 `json:"id"`
+	Amount int64 `json:"amount"`
 }
 
 func (q *Queries) CreateEntry(ctx context.Context, arg CreateEntryParams) (Entry, error) {
-	row := q.queryRow(ctx, q.createEntryStmt, createEntry, arg.AccountID, arg.Amount)
+	row := q.queryRow(ctx, q.createEntryStmt, createEntry, arg.ID, arg.Amount)
 	var i Entry
 	err := row.Scan(
 		&i.ID,
