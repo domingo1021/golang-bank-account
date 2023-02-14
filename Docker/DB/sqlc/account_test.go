@@ -32,12 +32,34 @@ func createRandomAccount(t *testing.T) Account {
 	return account
 }
 
-func GetRandomAccountID() int64 {
+func collisionHandler(num int64, targetMap *map[int64]bool) int64{
+	if _, ok := (*targetMap)[num]; ok {
+		return collisionHandler(num + 1, targetMap)
+	}
+	return num
+}
+
+func GetRandomAccountIDs(num int) (accountIDs []int64) {
 	count, err := testQueries.CountAccountsNumber(context.Background())
 	if err != nil {
 		log.Fatal("count account error: ", err)
 	}
-	return util.RandomInt(1, count)
+	if int(count) < num {
+		log.Fatal("request number of accounts is larger than number of existing accounts")
+	}
+	var tmpMap map[int64]bool
+	for i := 0; i < num; i++ {
+		newAccountID := util.RandomInt(1, count)
+		newAccountID = collisionHandler(newAccountID, &tmpMap)
+		tmpMap[newAccountID] = true
+		accountIDs = append(accountIDs, newAccountID)
+	}
+	return accountIDs
+}
+
+// depreciated, have better use GetRandomAccountIDs(num)
+func GetRandomAccountID() int64 {
+	return GetRandomAccountIDs(1)[0]
 }
 
 func TestCreateAccount(t *testing.T) {
