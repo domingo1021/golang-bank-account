@@ -7,7 +7,6 @@ package db
 
 import (
 	"context"
-	"database/sql"
 )
 
 const createTransfer = `-- name: CreateTransfer :one
@@ -22,9 +21,9 @@ RETURNING id, from_account_id, to_account_id, amount, create_at
 `
 
 type CreateTransferParams struct {
-	FromAccountID sql.NullInt64 `json:"fromAccountID"`
-	ToAccountID   sql.NullInt64 `json:"toAccountID"`
-	Amount        int64         `json:"amount"`
+	FromAccountID int64 `json:"fromAccountID"`
+	ToAccountID   int64 `json:"toAccountID"`
+	Amount        int64 `json:"amount"`
 }
 
 func (q *Queries) CreateTransfer(ctx context.Context, arg CreateTransferParams) (Transfer, error) {
@@ -67,10 +66,10 @@ OFFSET $4
 `
 
 type ListTransfersParams struct {
-	FromAccountID sql.NullInt64 `json:"fromAccountID"`
-	ToAccountID   sql.NullInt64 `json:"toAccountID"`
-	Limit         int32         `json:"limit"`
-	Offset        int32         `json:"offset"`
+	FromAccountID int64 `json:"fromAccountID"`
+	ToAccountID   int64 `json:"toAccountID"`
+	Limit         int32 `json:"limit"`
+	Offset        int32 `json:"offset"`
 }
 
 func (q *Queries) ListTransfers(ctx context.Context, arg ListTransfersParams) ([]Transfer, error) {
