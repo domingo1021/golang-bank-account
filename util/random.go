@@ -7,7 +7,6 @@ import (
 )
 
 var currencies []string
-const alphabet = "abcdefghijklmnopqrstuvwxys"
 
 // to solve no const slice literal problem in golang.
 func immutableCurrency() []string {
