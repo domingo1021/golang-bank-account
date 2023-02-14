@@ -10,10 +10,8 @@ import (
 
 func CreateSpecificEntry(t *testing.T, accountID int64) Entry {
 	randAmount := util.RandomMoney()
-	account, err := testQueries.GetAccount(context.Background(), accountID)
-	require.NoError(t, err)
 	args := CreateEntryParams{
-		AccountID: account.ID,
+		AccountID: accountID,
 		Amount: randAmount,
 	}
 
