@@ -18,7 +18,7 @@ ORDER BY id
 LIMIT $1
 OFFSET $2;
 
--- name: CountAccountsNumer :one
+-- name: CountAccountsNumber :one
 SELECT COUNT(*) FROM accounts;
 
 -- name: UpdateAccounts :one

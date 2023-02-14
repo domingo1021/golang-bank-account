@@ -33,7 +33,7 @@ func createRandomAccount(t *testing.T) Account {
 }
 
 func GetRandomAccountID() int64 {
-	count, err := testQueries.CountAccountsNumer(context.Background())
+	count, err := testQueries.CountAccountsNumber(context.Background())
 	if err != nil {
 		log.Fatal("count account error: ", err)
 	}

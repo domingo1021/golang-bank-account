@@ -9,12 +9,12 @@ import (
 	"context"
 )
 
-const countAccountsNumer = `-- name: CountAccountsNumer :one
+const countAccountsNumber = `-- name: CountAccountsNumber :one
 SELECT COUNT(*) FROM accounts
 `
 
-func (q *Queries) CountAccountsNumer(ctx context.Context) (int64, error) {
-	row := q.queryRow(ctx, q.countAccountsNumerStmt, countAccountsNumer)
+func (q *Queries) CountAccountsNumber(ctx context.Context) (int64, error) {
+	row := q.queryRow(ctx, q.countAccountsNumberStmt, countAccountsNumber)
 	var count int64
 	err := row.Scan(&count)
 	return count, err
