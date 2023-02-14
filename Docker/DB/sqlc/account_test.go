@@ -32,11 +32,11 @@ func createRandomAccount(t *testing.T) Account {
 	return account
 }
 
-func collisionHandler(num int64, targetMap *map[int64]bool) int64{
-	if _, ok := (*targetMap)[num]; ok {
-		return collisionHandler(num + 1, targetMap)
+func collisionHandler(value int64, targetMap *map[int64]bool) int64{
+	if _, ok := (*targetMap)[value]; ok {
+		return collisionHandler(value + 1, targetMap)
 	}
-	return num
+	return value
 }
 
 func GetRandomAccountIDs(num int) (accountIDs []int64) {
@@ -47,7 +47,8 @@ func GetRandomAccountIDs(num int) (accountIDs []int64) {
 	if int(count) < num {
 		log.Fatal("request number of accounts is larger than number of existing accounts")
 	}
-	var tmpMap map[int64]bool
+
+	var tmpMap = make(map[int64]bool, num)
 	for i := 0; i < num; i++ {
 		newAccountID := util.RandomInt(1, count)
 		newAccountID = collisionHandler(newAccountID, &tmpMap)
