@@ -18,6 +18,9 @@ ORDER BY id
 LIMIT $1
 OFFSET $2;
 
+-- name: CountAccountsNumer :one
+SELECT COUNT(*) FROM accounts;
+
 -- name: UpdateAccounts :one
 UPDATE accounts
   set balance = $2
