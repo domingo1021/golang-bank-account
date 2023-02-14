@@ -58,6 +58,14 @@ func GetRandomAccountIDs(num int) (accountIDs []int64) {
 	return accountIDs
 }
 
+
+func TestGetRandomAccountIDs(t *testing.T) {
+	for i := 0; i < 1000; i++ {
+		accountIDs := GetRandomAccountIDs(2)
+		require.NotEqual(t, accountIDs[0], accountIDs[1])
+	}
+}
+
 // depreciated, have better use GetRandomAccountIDs(num)
 func GetRandomAccountID() int64 {
 	return GetRandomAccountIDs(1)[0]
