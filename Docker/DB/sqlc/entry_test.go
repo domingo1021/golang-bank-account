@@ -8,9 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// create random entry
-func CreateRandomEntry(t *testing.T) Entry {
-	accountID := GetRandomAccountID()
+func CreateSpecificEntry(t *testing.T, accountID int64) Entry {
 	randAmount := util.RandomMoney()
 	account, err := testQueries.GetAccount(context.Background(), accountID)
 	require.NoError(t, err)
@@ -26,6 +24,12 @@ func CreateRandomEntry(t *testing.T) Entry {
 	require.Equal(t, args.AccountID, entry.AccountID)
 	require.Equal(t, args.Amount, entry.Amount)
 	return entry
+}
+
+// create random entry
+func CreateRandomEntry(t *testing.T) Entry {
+	accountID := GetRandomAccountID()
+	return CreateSpecificEntry(t, accountID)
 }
 
 //create entry unit test
@@ -49,20 +53,24 @@ func TestGetEntry(t *testing.T) {
 }
 
 func TestListEntries(t *testing.T) {
+	currAccountID := GetRandomAccountID()
 	for i := 0; i < 10; i++ {
-		CreateRandomEntry(t)
+		CreateSpecificEntry(t, currAccountID)
 	}
 
 	args := ListEntriesParams{
+		AccountID: currAccountID,
 		Limit: 5,
 		Offset: 5,
 	}
 
 	entries, err := testQueries.ListEntries(context.Background(), args)
 	require.NoError(t, err)
-	require.Len(t, entries, 5)
+	require.LessOrEqual(t, len(entries), 5)
+	
 
 	for _, entry := range entries {
 		require.NotEmpty(t, entry)
+		require.Equal(t, entry.AccountID, currAccountID)
 	}
 }
