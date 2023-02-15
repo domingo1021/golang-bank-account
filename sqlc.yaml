@@ -1,9 +1,9 @@
 version: "1"
 packages:
   - name: "db"
-    path: "./Docker/DB/sqlc"
-    queries: "./Docker/DB/query/"
-    schema: "./Docker/DB/migration/"
+    path: "./db/sqlc"
+    queries: "./db/query/"
+    schema: "./db/migration/"
     engine: "postgresql"
     emit_prepared_queries: true 
     emit_interface: false
