@@ -12,6 +12,8 @@ type Store struct {
 	db       *sql.DB
 }
 
+// new a *Query for general use
+// for transaction, will use db.BeginTx() create new sql.TX to new a *query (like line 32.)
 func NewStore(db *sql.DB) *Store {
 	return &Store{
 		db:      db,
