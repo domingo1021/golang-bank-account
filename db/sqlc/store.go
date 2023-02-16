@@ -62,44 +62,47 @@ func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (Trans
 	// q *Query is put from execTx transaction.
 	err := store.execTx(ctx, func(q *Queries) error {
 		var err error
+		var newTransfer Transfer
+		var fromEntry, toEntry Entry
+		var bigAccount, smallAccount Account
 
 		// create transfer
-		*(result.Transfer), err = q.CreateTransfer(ctx, CreateTransferParams(arg))
+		newTransfer, err = q.CreateTransfer(ctx, CreateTransferParams(arg))
 		if err != nil {
 			return err
 		}
+		result.Transfer = &newTransfer
 
 		// create From Account Entry
-		*(result.FromEntry), err = q.CreateEntry(ctx, CreateEntryParams{
+		fromEntry, err = q.CreateEntry(ctx, CreateEntryParams{
 			AccountID: arg.FromAccountID,
 			Amount:    -arg.Amount,
 		})
 		if err != nil {
 			return err
 		}
+		result.FromEntry = &fromEntry
 
 		// create From Account Entry
-		*(result.ToEntry), err = q.CreateEntry(ctx, CreateEntryParams{
+		toEntry, err = q.CreateEntry(ctx, CreateEntryParams{
 			AccountID: arg.ToAccountID,
 			Amount:    arg.Amount,
 		})
 		if err != nil {
 			return err
 		}
+		result.ToEntry = &toEntry
 
+		// manage account balance in ID ADES order.
 		fromAccountBigger := arg.FromAccountID > arg.ToAccountID
-
-		var bigAccount, smallAccount Account
 		bigAccount, err = q.AddAccountBalance(ctx, AddAccountFactory(fromAccountBigger, arg)[0])
 		if err != nil {
 			return err
 		}
-
 		smallAccount, err = q.AddAccountBalance(ctx, AddAccountFactory(fromAccountBigger, arg)[1])
 		if err != nil {
 			return err
 		}
-
 		result.resultAccountMatch(fromAccountBigger, &bigAccount, &smallAccount)
 
 		return nil
