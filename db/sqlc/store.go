@@ -47,11 +47,11 @@ type TransferTxParams struct {
 }
 
 type TransferTxResult struct {
-	Transfer    Transfer `json:"transfer"`
-	FromAccount Account  `json:"from_account"`
-	ToAccount   Account  `json:"to_account"`
-	FromEntry   Entry    `json:"from_entry"`
-	ToEntry     Entry    `json:"to_entry"`
+	Transfer    *Transfer `json:"transfer"`
+	FromAccount *Account  `json:"from_account"`
+	ToAccount   *Account  `json:"to_account"`
+	FromEntry   *Entry    `json:"from_entry"`
+	ToEntry     *Entry    `json:"to_entry"`
 }
 
 // TransferTx performs a money transfer from one account to the other
@@ -64,13 +64,13 @@ func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (Trans
 		var err error
 
 		// create transfer
-		result.Transfer, err = q.CreateTransfer(ctx, CreateTransferParams(arg))
+		*(result.Transfer), err = q.CreateTransfer(ctx, CreateTransferParams(arg))
 		if err != nil {
 			return err
 		}
 
 		// create From Account Entry
-		result.FromEntry, err = q.CreateEntry(ctx, CreateEntryParams{
+		*(result.FromEntry), err = q.CreateEntry(ctx, CreateEntryParams{
 			AccountID: arg.FromAccountID,
 			Amount:    -arg.Amount,
 		})
@@ -79,7 +79,7 @@ func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (Trans
 		}
 
 		// create From Account Entry
-		result.ToEntry, err = q.CreateEntry(ctx, CreateEntryParams{
+		*(result.ToEntry), err = q.CreateEntry(ctx, CreateEntryParams{
 			AccountID: arg.ToAccountID,
 			Amount:    arg.Amount,
 		})
@@ -87,24 +87,48 @@ func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (Trans
 			return err
 		}
 
-		result.FromAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
-			ID:     arg.FromAccountID,
-			Amount: -arg.Amount,
-		})
+		fromAccountBigger := arg.FromAccountID > arg.ToAccountID
+
+		var bigAccount, smallAccount Account
+		bigAccount, err = q.AddAccountBalance(ctx, AddAccountFactory(fromAccountBigger, arg)[0])
 		if err != nil {
 			return err
 		}
 
-		result.ToAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
-			ID:     arg.ToAccountID,
-			Amount: arg.Amount,
-		})
+		smallAccount, err = q.AddAccountBalance(ctx, AddAccountFactory(fromAccountBigger, arg)[1])
 		if err != nil {
 			return err
 		}
+
+		result.resultAccountMatch(fromAccountBigger, &bigAccount, &smallAccount)
 
 		return nil
 	})
 
 	return result, err
+}
+
+func AddAccountFactory(fromAccountBigger bool, arg TransferTxParams) (accounts [2]AddAccountBalanceParams) {
+	var smallIDParams, bigIDParams AddAccountBalanceParams
+
+	if fromAccountBigger {
+		bigIDParams = AddAccountBalanceParams{arg.FromAccountID, -arg.Amount}
+		smallIDParams = AddAccountBalanceParams{arg.ToAccountID, arg.Amount}
+	} else {
+		bigIDParams = AddAccountBalanceParams{arg.ToAccountID, arg.Amount}
+		smallIDParams = AddAccountBalanceParams{arg.FromAccountID, +arg.Amount}
+	}
+	accounts = [2]AddAccountBalanceParams{bigIDParams, smallIDParams}
+
+	return accounts
+}
+
+func (result *TransferTxResult) resultAccountMatch(fromAccountBigger bool, a1 *Account, a2 *Account) {
+	if fromAccountBigger {
+		result.FromAccount = a1
+		result.ToAccount = a2
+	} else {
+		result.ToAccount = a1
+		result.FromAccount = a2
+	}
 }
