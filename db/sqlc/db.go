@@ -24,6 +24,9 @@ func New(db DBTX) *Queries {
 func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	q := Queries{db: db}
 	var err error
+	if q.addAccountBalanceStmt, err = db.PrepareContext(ctx, addAccountBalance); err != nil {
+		return nil, fmt.Errorf("error preparing query AddAccountBalance: %w", err)
+	}
 	if q.countAccountsNumberStmt, err = db.PrepareContext(ctx, countAccountsNumber); err != nil {
 		return nil, fmt.Errorf("error preparing query CountAccountsNumber: %w", err)
 	}
@@ -68,6 +71,11 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 
 func (q *Queries) Close() error {
 	var err error
+	if q.addAccountBalanceStmt != nil {
+		if cerr := q.addAccountBalanceStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing addAccountBalanceStmt: %w", cerr)
+		}
+	}
 	if q.countAccountsNumberStmt != nil {
 		if cerr := q.countAccountsNumberStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing countAccountsNumberStmt: %w", cerr)
@@ -172,6 +180,7 @@ func (q *Queries) queryRow(ctx context.Context, stmt *sql.Stmt, query string, ar
 type Queries struct {
 	db                      DBTX
 	tx                      *sql.Tx
+	addAccountBalanceStmt   *sql.Stmt
 	countAccountsNumberStmt *sql.Stmt
 	createAccountStmt       *sql.Stmt
 	createEntryStmt         *sql.Stmt
@@ -191,6 +200,7 @@ func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 	return &Queries{
 		db:                      tx,
 		tx:                      tx,
+		addAccountBalanceStmt:   q.addAccountBalanceStmt,
 		countAccountsNumberStmt: q.countAccountsNumberStmt,
 		createAccountStmt:       q.createAccountStmt,
 		createEntryStmt:         q.createEntryStmt,

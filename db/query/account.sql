@@ -26,6 +26,12 @@ OFFSET $2;
 -- name: CountAccountsNumber :one
 SELECT COUNT(*) FROM accounts;
 
+-- name: AddAccountBalance :one
+UPDATE accounts
+  set balance = balance + sqlc.arg(amount)
+WHERE id = sqlc.arg(id)
+RETURNING *;
+
 -- name: UpdateAccounts :one
 UPDATE accounts
   set balance = $2
