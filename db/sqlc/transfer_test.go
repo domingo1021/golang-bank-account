@@ -2,22 +2,20 @@ package db
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
 	"github.com/domingo1021/golang-bank-account/util"
 	"github.com/stretchr/testify/require"
 )
 
-func CreateRandomTransfer(t *testing.T) Transfer{
+func CreateRandomTransfer(t *testing.T) Transfer {
 	randomAccountIDs := GetRandomAccountIDs(2)
 	fromAccountID := randomAccountIDs[0]
 	toAccountID := randomAccountIDs[1]
-	fmt.Printf("FID: %d, TID: %d\n", fromAccountID, toAccountID)
 	args := CreateTransferParams{
 		FromAccountID: fromAccountID,
-		ToAccountID: toAccountID,
-		Amount: util.RandomMoney(),
+		ToAccountID:   toAccountID,
+		Amount:        util.RandomMoney(),
 	}
 	transfer, err := testQueries.CreateTransfer(context.Background(), args)
 
@@ -40,7 +38,7 @@ func TestCreateTransfer(t *testing.T) {
 func TestGetTransfer(t *testing.T) {
 	transfer1 := CreateRandomTransfer(t)
 	transfer2, err := testQueries.GetTransfer(context.Background(), transfer1.ID)
-	
+
 	require.NoError(t, err)
 	require.NotEmpty(t, transfer2)
 
@@ -57,9 +55,9 @@ func TestListTransfers(t *testing.T) {
 
 	args := ListTransfersParams{
 		FromAccountID: fromAccountID,
-		ToAccountID: toAccountID,
-		Limit: 5,
-		Offset: 5,
+		ToAccountID:   toAccountID,
+		Limit:         5,
+		Offset:        5,
 	}
 	tranfers, err := testQueries.ListTransfers(context.Background(), args)
 	require.NoError(t, err)
