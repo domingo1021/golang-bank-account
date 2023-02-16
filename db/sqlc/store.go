@@ -115,11 +115,11 @@ func AddAccountFactory(fromAccountBigger bool, arg TransferTxParams) (accounts [
 	var smallIDParams, bigIDParams AddAccountBalanceParams
 
 	if fromAccountBigger {
-		bigIDParams = AddAccountBalanceParams{arg.FromAccountID, -arg.Amount}
-		smallIDParams = AddAccountBalanceParams{arg.ToAccountID, arg.Amount}
+		bigIDParams = AddAccountBalanceParams{-arg.Amount, arg.FromAccountID}
+		smallIDParams = AddAccountBalanceParams{arg.Amount, arg.ToAccountID}
 	} else {
-		bigIDParams = AddAccountBalanceParams{arg.ToAccountID, arg.Amount}
-		smallIDParams = AddAccountBalanceParams{arg.FromAccountID, +arg.Amount}
+		bigIDParams = AddAccountBalanceParams{arg.Amount, arg.ToAccountID}
+		smallIDParams = AddAccountBalanceParams{-arg.Amount, arg.FromAccountID}
 	}
 	accounts = [2]AddAccountBalanceParams{bigIDParams, smallIDParams}
 
