@@ -111,7 +111,7 @@ func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (Trans
 	return result, err
 }
 
-func AddAccountFactory(fromAccountBigger bool, arg TransferTxParams) (accounts [2]AddAccountBalanceParams) {
+func AddAccountFactory(fromAccountBigger bool, arg TransferTxParams) (params [2]AddAccountBalanceParams) {
 	var smallIDParams, bigIDParams AddAccountBalanceParams
 
 	if fromAccountBigger {
@@ -121,9 +121,9 @@ func AddAccountFactory(fromAccountBigger bool, arg TransferTxParams) (accounts [
 		bigIDParams = AddAccountBalanceParams{arg.Amount, arg.ToAccountID}
 		smallIDParams = AddAccountBalanceParams{-arg.Amount, arg.FromAccountID}
 	}
-	accounts = [2]AddAccountBalanceParams{bigIDParams, smallIDParams}
+	params = [2]AddAccountBalanceParams{bigIDParams, smallIDParams}
 
-	return accounts
+	return params
 }
 
 func (result *TransferTxResult) resultAccountMatch(fromAccountBigger bool, a1 *Account, a2 *Account) {
