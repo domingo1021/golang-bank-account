@@ -6,22 +6,19 @@ import (
 	"os"
 	"testing"
 
+	"github.com/domingo1021/golang-bank-account/util"
 	_ "github.com/lib/pq"
-)
-
-// const variabe of db setup will be moved to env variable latter.
-const (
-	dbDriver = "postgres"
-	dbSource = "postgresql://root:password1234@localhost:5432/bank_account?sslmode=disable"
 )
 
 var testQueries *Queries
 var testDB *sql.DB
 
 func TestMain(m *testing.M) {
-	var err error
-
-	testDB, err = sql.Open(dbDriver, dbSource)
+	config, err := util.LoadConfig("../../test")
+	if err != nil {
+		log.Fatal("cannot load env variable: ", err)
+	}
+	testDB, err = sql.Open(config.DBDriver, config.DBSource)
 	if err != nil {
 		log.Fatal("cannot connect to db: ", err)
 	}
