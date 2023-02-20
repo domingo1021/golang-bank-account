@@ -19,7 +19,7 @@ type getAccountRequest struct {
 
 type listAccountRequest struct {
 	pageID   int32 `form:"page_id" binding:"required,min=1"`
-	pageSize int32 `form:"page_size" binding:"required,min=5, max=10"`
+	pageSize int32 `form:"page_size" binding:"required,min=5,max=10"`
 }
 
 func (server *Server) createAccount(ctx *gin.Context) {
